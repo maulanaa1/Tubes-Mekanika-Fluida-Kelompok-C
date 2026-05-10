@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estimasi Daya Listrik Turbin Air — PLTA Mini</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+         :root {
+            --blue-50: #E6F1FB;
+            --blue-200: #85B7EB;
+            --blue-400: #378ADD;
+            --blue-600: #185FA5;
+            --blue-800: #0C447C;
+            --blue-900: #042C53;
+            --teal-50: #E1F5EE;
+            --teal-200: #5DCAA5;
+            --teal-400: #1D9E75;
+            --teal-600: #0F6E56;
+            --teal-800: #085041;
+            --amber-50: #FAEEDA;
+            --amber-200: #FAC775;
+            --amber-400: #EF9F27;
+            --amber-600: #BA7517;
+            --amber-800: #854F0B;
+            --purple-50: #EEEDFE;
+            --purple-200: #AFA9EC;
+            --purple-400: #7F77DD;
+            --purple-600: #534AB7;
+            --purple-800: #3C3489;
+            --green-50: #EAF3DE;
+            --green-400: #639922;
+            --green-600: #3B6D11;
+            --coral-50: #FAECE7;
+            --coral-400: #D85A30;
+            --coral-600: #993C1D;
+            --gray-100: #F5F4F0;
+            --gray-200: #E8E7E2;
+            --gray-400: #888780;
+            --gray-600: #5F5E5A;
+            --gray-800: #444441;
+            --text-primary: #1a1a18;
+            --text-secondary: #5F5E5A;
+            --text-tertiary: #888780;
+            --bg-page: #F5F4F0;
+            --bg-surface: #ffffff;
+            --bg-secondary: #F0EFE9;
+            --border: #D3D1C7;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+        }
+        
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        /* ── HERO HEADER ── */
+        
+        .hero {
+            background: linear-gradient(135deg, var(--blue-900) 0%, var(--blue-800) 40%, var(--teal-600) 100%);
+            padding: 2.5rem 1.5rem 3.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .hero-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+        }
+        
+        .hero h1 {
+            font-size: clamp(24px, 4vw, 36px);
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 520px;
+        }
+        
+        .hero-wave {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+        }
+        
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+        
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-title svg {
+            flex-shrink: 0;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+        
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .metric {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem 1.25rem 1rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric.primary {
+            background: var(--blue-900);
+            border-color: var(--blue-800);
+        }
+        
+        .metric.primary .metric-label {
+            color: rgba(255, 255, 255, 0.55);
+        }
+        
+        .metric.primary .metric-value {
+            color: #ffffff;
+        }
+        
+        .metric.primary .metric-unit {
+            color: rgba(255, 255, 255, 0.45);
+        }
+        
+        .metric-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            font-size: 16px;
+        }
+        
+        .metric-icon.blue {
+            background: var(--blue-50);
+        }
+        
+        .metric-icon.teal {
+            background: var(--teal-50);
+        }
+        
+        .metric-icon.amber {
+            background: var(--amber-50);
+        }
+        
+        .metric-icon.purple {
+            background: var(--purple-50);
+        }
+        
+        .metric-icon.white {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .metric-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        
+        .metric-unit {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+        
+        .field {
+            margin-bottom: 1.5rem;
+        }
+        
+        .field:last-child {
+            margin-bottom: 0;
+        }
+        
+        .field-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .field-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .field-sublabel {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+        
+        .field-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--blue-600);
+            background: var(--blue-50);
+            padding: 3px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--gray-200);
+            outline: none;
+            cursor: pointer;
+        }
+        
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--blue-600);
+            cursor: pointer;
+            border: 3px solid #fff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+            transition: transform 0.15s;
+        }
+        
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        
+        input[type=range]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--blue-600);
+            cursor: pointer;
+            border: 3px solid #fff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-tertiary);
+            margin-top: 6px;
+        }
+        
+        .divider {
+            border: none;
+            border-top: 1px solid var(--gray-200);
+            margin: 1.25rem 0;
+        }
+        
+        .formula {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.25rem;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        .formula .eq {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--blue-800);
+            font-weight: 500;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .formula .calc {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--teal-600);
+            display: block;
+            margin-top: 6px;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-top: 0.75rem;
+        }
+        
+        .badge-kaplan {
+            background: var(--teal-50);
+            color: var(--teal-600);
+        }
+        
+        .badge-francis {
+            background: var(--blue-50);
+            color: var(--blue-600);
+        }
+        
+        .badge-pelton {
+            background: var(--amber-50);
+            color: var(--amber-800);
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 260px;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+        
+        .diagram-wrap {
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: linear-gradient(180deg, #ddf0f9 0%, #b8e4f5 40%, #e8f5e9 100%);
+            padding: 0;
+        }
+        
+        .gauge-wrap {
+            display: flex;
+            justify-content: center;
+            margin: 0.5rem 0;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+        }
+        
+        .info-item {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 0.875rem 1rem;
+            font-size: 12px;
+        }
+        
+        .info-item strong {
+            display: block;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+        
+        .info-item span {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            border-top: 1px solid var(--gray-200);
+            margin-top: 2rem;
+        }
+        
+        .footer strong {
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 700px) {
+            .metrics-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .metrics-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="hero-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>                Pembangkit Listrik Tenaga Air
+            </div>
+            <h1>Estimasi Daya Listrik Turbin Air</h1>
+            <p>Simulasi PLTA mini secara interaktif.</p>
+        </div>
+        <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" height="48">
+    <path d="M0,40 C360,70 1080,10 1440,40 L1440,60 L0,60 Z" fill="#F5F4F0"/>
+  </svg>
+    </header>
+
+    <main class="container">
+
+        <div class="metrics-row">
+            <div class="metric primary">
+                <div class="metric-icon white">⚡</div>
+                <div class="metric-label">Daya Listrik</div>
+                <div class="metric-value" id="out-power">0.00</div>
+                <div class="metric-unit">kilowatt (kW)</div>
+            </div>
+            <div class="metric">
+                <div class="metric-icon blue">🏠</div>
+                <div class="metric-label">Rumah Dilayani</div>
+                <div class="metric-value" id="out-homes">0</div>
+                <div class="metric-unit">rumah (900 W/rumah)</div>
+            </div>
+            <div class="metric">
+                <div class="metric-icon teal">📅</div>
+                <div class="metric-label">Energi per Hari</div>
+                <div class="metric-value" id="out-daily">0.0</div>
+                <div class="metric-unit">kWh per hari</div>
+            </div>
+            <div class="metric">
+                <div class="metric-icon amber">📊</div>
+                <div class="metric-label">Energi per Tahun</div>
+                <div class="metric-value" id="out-annual">0.0</div>
+                <div class="metric-unit">MWh per tahun</div>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 1.25rem;">
+
+            <div class="card">
+                <div class="card-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Parameter Input
+                </div>
+
+                <div class="field">
+                    <div class="field-header">
+                        <div>
+                            <div class="field-label">💧 Debit Air (Q)</div>
+                            <div class="field-sublabel">Volume air per satuan waktu</div>
+                        </div>
+                        <div class="field-value" id="val-q">5.0 m³/s</div>
+                    </div>
+                    <input type="range" id="sl-q" min="0.1" max="50" step="0.1" value="5">
+                    <div class="range-labels"><span>0.1 m³/s</span><span>50 m³/s</span></div>
+                </div>
+
+                <div class="field">
+                    <div class="field-header">
+                        <div>
+                            <div class="field-label">⛰️ Head Turbin (H)</div>
+                            <div class="field-sublabel">Beda ketinggian air efektif</div>
+                        </div>
+                        <div class="field-value" id="val-h">20 m</div>
+                    </div>
+                    <input type="range" id="sl-h" min="1" max="500" step="1" value="20">
+                    <div class="range-labels"><span>1 m</span><span>500 m</span></div>
+                </div>
+
+                <div class="field">
+                    <div class="field-header">
+                        <div>
+                            <div class="field-label">⚙️ Efisiensi (η)</div>
+                            <div class="field-sublabel">Persentase konversi energi</div>
+                        </div>
+                        <div class="field-value" id="val-e">85%</div>
+                    </div>
+                    <input type="range" id="sl-e" min="50" max="95" step="1" value="85">
+                    <div class="range-labels"><span>50%</span><span>95%</span></div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="formula">
+                    <span class="eq">P = ρ × g × Q × H × η</span>
+                    <span style="font-size:12px;">ρ = 1000 kg/m³ (massa jenis air), g = 9.81 m/s²</span>
+                    <span class="calc" id="formula-calc">= 1000 × 9.81 × 5.0 × 20 × 0.85 = 834,850 W ≈ 834.85 kW</span>
+                </div>
+
+                <span id="turbine-badge" class="badge badge-francis">🌀 Turbin Francis (Head Menengah)</span>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Visualisasi Sistem PLTA
+                </div>
+
+                <div class="diagram-wrap">
+                    <svg id="plta-diagram" viewBox="0 0 360 280" width="100%" role="img" aria-label="Diagram sistem PLTA mini dari bendungan ke generator">
+          <defs>
+            <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#185FA5"/>
+            </marker>
+            <marker id="arr-amber" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#BA7517"/>
+            </marker>
+            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#87CEEB" stop-opacity="0.6"/>
+              <stop offset="100%" stop-color="#b8e4f5" stop-opacity="0.3"/>
+            </linearGradient>
+            <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#378ADD" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#185FA5" stop-opacity="0.95"/>
+            </linearGradient>
+            <linearGradient id="mountainGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#5DCAA5" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#1D9E75" stop-opacity="0.2"/>
+            </linearGradient>
+          </defs>
+
+          <rect x="0" y="0" width="360" height="280" fill="url(#skyGrad)"/>
+
+          <polygon points="0,130 60,50 120,130" fill="url(#mountainGrad)"/>
+          <polygon points="40,130 110,30 180,110" fill="url(#mountainGrad)" opacity="0.7"/>
+
+          <rect x="20" y="70" width="90" height="70" rx="4" fill="#888780" opacity="0.5"/>
+          <rect x="22" y="72" width="86" height="66" rx="3" fill="#B4B2A9" opacity="0.3"/>
+
+          <rect id="water-rect" x="22" y="80" width="86" height="55" rx="3" fill="url(#waterGrad)"/>
+
+          <ellipse cx="65" cy="84" rx="30" ry="3" fill="white" opacity="0.2"/>
+          <ellipse cx="55" cy="89" rx="20" ry="2" fill="white" opacity="0.15"/>
+
+          <text x="65" y="104" text-anchor="middle" font-size="10" font-family="'Plus Jakarta Sans',sans-serif" font-weight="600" fill="#042C53">Bendungan</text>
+
+          <text id="q-label-svg" x="65" y="68" text-anchor="middle" font-size="9" font-family="'Plus Jakarta Sans',sans-serif" fill="#0C447C" font-weight="500">Q = 5.0 m³/s</text>
+
+          <line id="head-line-svg" x1="118" y1="78" x2="118" y2="168" stroke="#D85A30" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <polygon points="115,80 121,80 118,74" fill="#D85A30"/>
+          <polygon points="115,166 121,166 118,172" fill="#D85A30"/>
+          <rect x="121" y="113" width="52" height="18" rx="4" fill="white" opacity="0.8"/>
+          <text id="head-label-svg" x="147" y="126" text-anchor="middle" font-size="10" font-family="'JetBrains Mono',monospace" fill="#993C1D" font-weight="500">H = 20 m</text>
+
+          <rect x="100" y="130" width="18" height="55" rx="4" fill="#444441" opacity="0.8"/>
+          <rect x="103" y="132" width="6" height="51" rx="2" fill="#888780" opacity="0.5"/>
+
+          <line x1="109" y1="138" x2="109" y2="165" stroke="#85B7EB" stroke-width="3" stroke-linecap="round" marker-end="url(#arr-blue)" opacity="0.9"/>
+
+          <ellipse id="turbine-ellipse" cx="155" cy="175" rx="32" ry="23" fill="#534AB7" opacity="0.9"/>
+          <ellipse cx="155" cy="175" rx="25" ry="17" fill="#7F77DD" opacity="0.8"/>
+
+          <g id="turbine-blades" transform="translate(155,175)">
+            <rect x="-4" y="-20" width="8" height="20" rx="4" fill="white" opacity="0.85"/>
+            <rect x="-4" y="0"  width="8" height="20" rx="4" fill="white" opacity="0.85"/>
+            <rect x="-20" y="-4" width="20" height="8" rx="4" fill="white" opacity="0.85"/>
+            <rect x="0"  y="-4" width="20" height="8" rx="4" fill="white" opacity="0.85"/>
+          </g>
+          <circle cx="155" cy="175" r="6" fill="#EEEDFE"/>
+
+          <rect x="100" y="168" width="23" height="12" rx="3" fill="#378ADD" opacity="0.7"/>
+
+          <rect x="187" y="172" width="28" height="6" rx="3" fill="#3C3489"/>
+
+          <rect x="215" y="155" width="60" height="42" rx="7" fill="#0F6E56" opacity="0.9"/>
+          <text x="245" y="176" text-anchor="middle" font-size="10" font-family="'Plus Jakarta Sans',sans-serif" fill="#9FE1CB" font-weight="600">Generator</text>
+          <text x="245" y="189" text-anchor="middle" font-size="8" font-family="'Plus Jakarta Sans',sans-serif" fill="#5DCAA5">AC Output</text>
+
+          <line x1="275" y1="176" x2="330" y2="176" stroke="#EF9F27" stroke-width="2.5" stroke-dasharray="7,4" marker-end="url(#arr-amber)"/>
+          <text x="302" y="168" text-anchor="middle" font-size="9" font-family="'Plus Jakarta Sans',sans-serif" fill="#854F0B" font-weight="500">Output ⚡</text>
+
+          <circle cx="340" cy="176" r="14" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1.5"/>
+          <text x="340" y="181" text-anchor="middle" font-size="14" fill="#BA7517">⚡</text>
+
+          <path d="M119,198 Q140,210 210,210" stroke="#85B7EB" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+          <text x="165" y="226" text-anchor="middle" font-size="9" font-family="'Plus Jakarta Sans',sans-serif" fill="#185FA5">Saluran Pembuangan</text>
+
+          <text id="turbine-type-label" x="155" y="213" text-anchor="middle" font-size="9" font-family="'Plus Jakarta Sans',sans-serif" fill="#3C3489" font-weight="600">Turbin Francis</text>
+
+          <rect x="215" y="205" width="60" height="20" rx="5" fill="white" opacity="0.6"/>
+          <text id="eff-label-svg" x="245" y="219" text-anchor="middle" font-size="9" font-family="'JetBrains Mono',monospace" fill="#3B6D11" font-weight="500">η = 85%</text>
+        </svg>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Daya Hidro</strong>
+                        <span id="info-hydro">0.00 kW</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Daya Turbin</strong>
+                        <span id="info-turbine">0.00 kW</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Kerugian</strong>
+                        <span id="info-loss">0.00 kW</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Analisis Sensitivitas Parameter terhadap Daya Output
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#185FA5;"></div>
+                    Variasi Debit Air (Q)
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#0F6E56;"></div>
+                    Variasi Head Turbin (H)
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#BA7517;"></div>
+                    Variasi Efisiensi (η)
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="mainChart" role="img" aria-label="Grafik batang analisis sensitivitas parameter terhadap daya output turbin air.">
+        Grafik menampilkan perbandingan daya output untuk berbagai skenario variasi debit, head, dan efisiensi.
+      </canvas>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 1.25rem;">
+            <div class="card">
+                <div class="card-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12c0 1.66-.4 3.22-1.1 4.6L12 12l8.9-4.6A10 10 0 0 1 21 12z"/><path d="M12 2a10 10 0 0 1 8.9 5.4L12 12 3.1 7.4A10 10 0 0 1 12 2z"/><path d="M3.1 16.6A10 10 0 0 0 12 22a10 10 0 0 0 8.9-5.4"/></svg>                    Distribusi Energi
+                </div>
+                <div class="chart-container" style="height: 220px;">
+                    <canvas id="donutChart" role="img" aria-label="Grafik donut distribusi energi: daya berguna vs kerugian.">Distribusi energi turbin.</canvas>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Kurva Daya vs Debit Air
+                </div>
+                <div class="chart-container" style="height: 220px;">
+                    <canvas id="lineChart" role="img" aria-label="Grafik garis hubungan antara debit air dan daya output.">Kurva daya vs debit.</canvas>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <strong>Aplikasi Estimasi Daya Listrik Turbin Air</strong><br> Rumus: P = ρ × g × Q × H × η &nbsp;|&nbsp; ρ = 1000 kg/m³, g = 9,81 m/s²<br>
+        <span style="font-size:11px;margin-top:4px;display:block;">Dikembangkan untuk simulasi PLTA mini — nilai bersifat estimasi teknis</span>
+    </footer>
+
+    <script>
+        let angle = 0,
+            rafId;
+
+        function animateBlades(speed) {
+            angle += speed;
+            const blades = document.getElementById('turbine-blades');
+            if (blades) blades.setAttribute('transform', `translate(155,175) rotate(${angle})`);
+            rafId = requestAnimationFrame(() => animateBlades(speed));
+        }
+        cancelAnimationFrame(rafId);
+        animateBlades(1.5);
+
+        const rho = 1000,
+            g = 9.81;
+        let barChart, donutChart, lineChart;
+
+        function calcPower(q, h, e) {
+            return (rho * g * q * h * (e / 100)) / 1000;
+        }
+
+        function getTurbineInfo(h) {
+            if (h < 30) return {
+                label: '🌊 Turbin Kaplan (Head Rendah < 30m)',
+                cls: 'badge-kaplan',
+                svgLabel: 'Turbin Kaplan',
+                speedMult: 2.5
+            };
+            if (h < 150) return {
+                label: '🌀 Turbin Francis (Head Menengah 30–150m)',
+                cls: 'badge-francis',
+                svgLabel: 'Turbin Francis',
+                speedMult: 1.5
+            };
+            return {
+                label: '💨 Turbin Pelton (Head Tinggi > 150m)',
+                cls: 'badge-pelton',
+                svgLabel: 'Turbin Pelton',
+                speedMult: 0.8
+            };
+        }
+
+        function update() {
+            const q = parseFloat(document.getElementById('sl-q').value);
+            const h = parseFloat(document.getElementById('sl-h').value);
+            const e = parseFloat(document.getElementById('sl-e').value);
+
+            document.getElementById('val-q').textContent = q.toFixed(1) + ' m³/s';
+            document.getElementById('val-h').textContent = h.toFixed(0) + ' m';
+            document.getElementById('val-e').textContent = e.toFixed(0) + '%';
+
+            const power = calcPower(q, h, e);
+            const hydroPower = (rho * g * q * h) / 1000;
+            const loss = hydroPower - power;
+            const homes = Math.floor(power * 1000 / 900);
+            const daily = power * 24;
+            const annual = power * 8760 / 1000;
+
+            document.getElementById('out-power').textContent = power.toFixed(2);
+            document.getElementById('out-homes').textContent = homes.toLocaleString('id-ID');
+            document.getElementById('out-daily').textContent = daily.toFixed(1);
+            document.getElementById('out-annual').textContent = annual.toFixed(1);
+
+            document.getElementById('info-hydro').textContent = hydroPower.toFixed(2) + ' kW';
+            document.getElementById('info-turbine').textContent = power.toFixed(2) + ' kW';
+            document.getElementById('info-loss').textContent = loss.toFixed(2) + ' kW';
+
+            const watt = power * 1000;
+            document.getElementById('formula-calc').textContent =
+                '= 1000 × 9.81 × ' + q.toFixed(1) + ' × ' + h.toFixed(0) + ' × ' + (e / 100).toFixed(2) +
+                ' = ' + watt.toLocaleString('id-ID', {
+                    maximumFractionDigits: 0
+                }) + ' W ≈ ' + power.toFixed(2) + ' kW';
+
+            const tInfo = getTurbineInfo(h);
+            const badge = document.getElementById('turbine-badge');
+            badge.textContent = tInfo.label;
+            badge.className = 'badge ' + tInfo.cls;
+            document.getElementById('turbine-type-label').textContent = tInfo.svgLabel;
+
+            document.getElementById('q-label-svg').textContent = 'Q = ' + q.toFixed(1) + ' m³/s';
+            document.getElementById('head-label-svg').textContent = 'H = ' + h.toFixed(0) + ' m';
+            document.getElementById('eff-label-svg').textContent = 'η = ' + e.toFixed(0) + '%';
+
+            cancelAnimationFrame(rafId);
+            const speed = Math.min(Math.max(power / 100, 0.3), 5);
+            animateBlades(speed);
+
+            updateCharts(q, h, e, power, hydroPower, loss);
+        }
+
+        function updateCharts(q, h, e, power, hydroPower, loss) {
+            const barLabels = [
+                'Q × 0.25', 'Q × 0.5', 'Saat Ini', 'Q × 2', 'Q × 4',
+                'H × 0.25', 'H × 0.5', 'Saat Ini', 'H × 2', 'H × 4',
+                'η = 60%', 'η = 75%', 'η = 85%', 'η = 90%', 'η = 95%'
+            ];
+            const barData = {
+                q: [
+                    calcPower(q * 0.25, h, e), calcPower(q * 0.5, h, e), power,
+                    calcPower(q * 2, h, e), calcPower(q * 4, h, e)
+                ],
+                h: [
+                    calcPower(q, h * 0.25, e), calcPower(q, h * 0.5, e), power,
+                    calcPower(q, h * 2, e), calcPower(q, h * 4, e)
+                ],
+                eff: [
+                    calcPower(q, h, 60), calcPower(q, h, 75),
+                    calcPower(q, h, 85), calcPower(q, h, 90), calcPower(q, h, 95)
+                ]
+            };
+
+            const bLabels = ['Q×0.25', 'Q×0.5', 'Q saat ini', 'Q×2', 'Q×4'];
+            const hLabels = ['H×0.25', 'H×0.5', 'H saat ini', 'H×2', 'H×4'];
+            const eLabels = ['η=60%', 'η=75%', 'η=85%', 'η=90%', 'η=95%'];
+
+            if (barChart) {
+                barChart.data.datasets[0].data = barData.q;
+                barChart.data.datasets[1].data = barData.h;
+                barChart.data.datasets[2].data = barData.eff;
+                barChart.update('none');
+            } else {
+                const ctx = document.getElementById('mainChart').getContext('2d');
+                barChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: bLabels,
+                        datasets: [{
+                            label: 'Variasi Q',
+                            data: barData.q,
+                            backgroundColor: 'rgba(24,95,165,0.7)',
+                            borderColor: '#185FA5',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            borderSkipped: false
+                        }, {
+                            label: 'Variasi H',
+                            data: barData.h,
+                            backgroundColor: 'rgba(15,110,86,0.65)',
+                            borderColor: '#0F6E56',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            borderSkipped: false
+                        }, {
+                            label: 'Variasi η',
+                            data: barData.eff,
+                            backgroundColor: 'rgba(186,117,23,0.65)',
+                            borderColor: '#BA7517',
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(2) + ' kW'
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    color: '#888780',
+                                    font: {
+                                        size: 11
+                                    },
+                                    maxRotation: 0
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    color: '#888780',
+                                    font: {
+                                        size: 11
+                                    },
+                                    callback: v => v.toFixed(0) + ' kW'
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Daya Output (kW)',
+                                    color: '#888780',
+                                    font: {
+                                        size: 11
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (donutChart) {
+                donutChart.data.datasets[0].data = [
+                    parseFloat(power.toFixed(2)),
+                    parseFloat(loss.toFixed(2))
+                ];
+                donutChart.update('none');
+            } else {
+                const dCtx = document.getElementById('donutChart').getContext('2d');
+                donutChart = new Chart(dCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Daya Berguna (kW)', 'Kerugian (kW)'],
+                        datasets: [{
+                            data: [parseFloat(power.toFixed(2)), parseFloat(loss.toFixed(2))],
+                            backgroundColor: ['#185FA5', '#E8E7E2'],
+                            borderColor: ['#0C447C', '#D3D1C7'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: {
+                                        size: 11
+                                    },
+                                    color: '#5F5E5A',
+                                    boxWidth: 12
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => ctx.label + ': ' + ctx.parsed.toFixed(2) + ' kW'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const qRange = [];
+            const pRange = [];
+            const steps = 20;
+            const qMin = 0.1,
+                qMax = 50;
+            for (let i = 0; i <= steps; i++) {
+                const qi = qMin + (qMax - qMin) * (i / steps);
+                qRange.push(parseFloat(qi.toFixed(1)));
+                pRange.push(parseFloat(calcPower(qi, h, e).toFixed(2)));
+            }
+
+            if (lineChart) {
+                lineChart.data.labels = qRange;
+                lineChart.data.datasets[0].data = pRange;
+                lineChart.data.datasets[1].data = [{
+                    x: q,
+                    y: power
+                }];
+                lineChart.update('none');
+            } else {
+                const lCtx = document.getElementById('lineChart').getContext('2d');
+                lineChart = new Chart(lCtx, {
+                    type: 'line',
+                    data: {
+                        labels: qRange,
+                        datasets: [{
+                            label: 'Daya (kW)',
+                            data: pRange,
+                            borderColor: '#185FA5',
+                            backgroundColor: 'rgba(24,95,165,0.08)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 4
+                        }, {
+                            label: 'Titik Saat Ini',
+                            data: [{
+                                x: q,
+                                y: power
+                            }],
+                            borderColor: '#D85A30',
+                            backgroundColor: '#D85A30',
+                            type: 'scatter',
+                            pointRadius: 7,
+                            pointHoverRadius: 9
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => ctx.dataset.label + ': ' + (ctx.parsed.y || ctx.parsed.y === 0 ? ctx.parsed.y.toFixed(2) : '') + ' kW'
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    color: '#888780',
+                                    font: {
+                                        size: 10
+                                    },
+                                    maxTicksLimit: 8,
+                                    callback: v => v + ' m³/s'
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Debit Air Q (m³/s)',
+                                    color: '#888780',
+                                    font: {
+                                        size: 11
+                                    }
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    color: '#888780',
+                                    font: {
+                                        size: 10
+                                    },
+                                    callback: v => v.toFixed(0) + ' kW'
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Daya (kW)',
+                                    color: '#888780',
+                                    font: {
+                                        size: 11
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        ['sl-q', 'sl-h', 'sl-e'].forEach(id => {
+            document.getElementById(id).addEventListener('input', update);
+        });
+
+        update();
+    </script>
+</body>
+
+</html>
